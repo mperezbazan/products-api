@@ -4,9 +4,15 @@ import { AppService } from './app.service';
 import { ProductsModule } from './products/products.module';
 import { CategoriesModule } from './categories/categories.module';
 import { BrandsModule } from './brands/brands.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [ProductsModule, CategoriesModule, BrandsModule],
+  imports: [
+    ConfigModule.forRoot(),
+    ProductsModule,
+    CategoriesModule,
+    BrandsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

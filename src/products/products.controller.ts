@@ -64,12 +64,12 @@ export class ProductsController {
 
   @Get('brands')
   findBrands() {
-    return BRANDS;
+    return this.productsService.findBrands();
   }
 
   @Get('categories')
   findCategories() {
-    return CATEGORIES;
+    return this.productsService.findCategories();
   }
 
   @Get(':id')
