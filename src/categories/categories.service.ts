@@ -1,0 +1,43 @@
+import { Injectable } from '@nestjs/common';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
+
+const DATA = {
+  categories: [
+    {
+      name: 'Protetor Solar',
+    },
+    {
+      name: 'Nutricosméticos',
+    },
+    {
+      name: 'Protetor Solar',
+    },
+    {
+      name: 'Lenços Umedecidos',
+    },
+  ],
+};
+
+@Injectable()
+export class CategoriesService {
+  create(createCategoryDto: CreateCategoryDto) {
+    return 'This action adds a new category';
+  }
+
+  findAll() {
+    return DATA;
+  }
+
+  findOne(id: number) {
+    return `This action returns a #${id} category`;
+  }
+
+  update(id: number, updateCategoryDto: UpdateCategoryDto) {
+    return `This action updates a #${id} category`;
+  }
+
+  remove(id: number) {
+    return `This action removes a #${id} category`;
+  }
+}
