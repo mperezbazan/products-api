@@ -4,40 +4,39 @@ import { UpdateProductDto } from './dto/update-product.dto';
 const DATA = {
   products: [
     {
-      name: 'Protetor Solar Facial Anthelios XL-Protect Cor Morena FPS 60 Gel Creme 40g',
+      name: 'TOPITOS JERUSALEN',
       description:
-        'PROTETOR SOLAR FACIAL ANTHELIOS XL-PROTECT COR MORENA FPS 60 GEL CREME Pele extremamente sensível a queimadura solar.',
-      originalValue: 69.29,
-      currentValue: 45.29,
-      category: 'Protetor Solar',
-      brand: 'Anthelios',
+        'Topitos Plateados, divinos para usar en el día a día y para combinarlos con mas aretes. Es tendencia!</p> <p><em><strong>(Precio por par)</strong></em></p> <p><strong>Material:</strong> Acero</p> <p><strong>Color:</strong> Plateado</p> <p><strong>Cuidados:</strong> Recomendamos guardar por separado cada accesorio, almacenarlos en lugares secos y a temperatura ambiente; limpiarlos con un pañito o franela y sin ningún tipo de producto, evitar contacto con productos químicos como cremas y perfumes, no dormir ni bañarse con ellos. La durabilidad de los accesorios depende 100% del cuidado de cada persona.</p>',
+      originalValue: 20000,
+      currentValue: 20000,
+      category: 'Aretes',
+      brand: 'Topitos',
       unitType: '',
       unitQuantity: 150,
       extras: null,
       images: [
         {
-          imageUrl:
-            'https://s3-sa-east-1.amazonaws.com/i.imgtake.takenet.com.br/ieq09onpj2/ieq09onpj2.png',
+          imageUrl: 'https://anele.com.co/wp-content/uploads/2023/08/9.jpg',
           order: 1,
         },
       ],
-      sku: 'abc',
+      sku: '9308',
     },
     {
-      name: 'Lavitan Cabelos e Unhas 60 Cápsulas',
+      name: 'CADENITA LETRAS',
       description:
-        'Suplemento vitamínico-mineral. Auxilia no crescimento e fortalecimento de cabelos e unhas. Lavitan Cabelos e Unhas é um suplemento que possui ação antioxidante, além de ajudar a evitar a queda e na manutenção da saúde dos cabelos, além de deixar suas unhas muito mais fortes e saudáveis.',
-      originalValue: 41.29,
-      currentValue: 34.99,
-      category: 'Nutricosméticos',
-      brand: 'Lavitan',
+        '<p>Cadenita dorada, básica con dije de letra ideal para usar solita o con mas cadenitas.! Es DIVINA! Y lo mejor, es ajustable y puedes usarla de acuerdo a tu gusto, larga o corta!</p> <p><strong><em>(Precio por unidad)</em></strong></p> <p><strong>Material:</strong> Rodio</p> <p><strong>Medidas:</strong> 45 cms</p> <div class="woocommerce-product-details__short-description"> <p><b>Cuidados</b><strong>: </strong>Recomendamos guardar por separado cada accesorio, almacenarlos en lugares secos y a temperatura ambiente; limpiarlos con un pañito o franela y sin ningún tipo de producto, evitar contacto con productos químicos como cremas y perfumes, no dormir ni bañarse con ellos. La durabilidad de los accesorios depende 100% del cuidado de cada persona.</p> </div> ',
+      originalValue: 28000,
+      currentValue: 28000,
+      category: 'Collares',
+      brand: 'Nuevo',
       unitType: '',
       unitQuantity: 150,
       extras: null,
       images: [
         {
           imageUrl:
-            'https://s3-sa-east-1.amazonaws.com/i.imgtake.takenet.com.br/indh43e088/indh43e088.png',
+            'https://anele.com.co/wp-content/uploads/2023/08/LETRAS-C-1.jpg',
           order: 1,
         },
       ],

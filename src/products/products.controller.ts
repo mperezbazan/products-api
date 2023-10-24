@@ -25,22 +25,25 @@ const BRANDS = {
     {
       name: 'Mamypoko',
     },
+    {
+      name: 'Aretes',
+    },
+    {
+      name: 'Nuevo',
+    },
+    {
+      name: 'Topitos',
+    },
   ],
 };
 
 const CATEGORIES = {
   categories: [
     {
-      name: 'Protetor Solar',
+      name: 'Aretes',
     },
     {
-      name: 'Nutricosméticos',
-    },
-    {
-      name: 'Protetor Solar',
-    },
-    {
-      name: 'Lenços Umedecidos',
+      name: 'Collares',
     },
   ],
 };
