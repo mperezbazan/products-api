@@ -282,7 +282,7 @@ export class ProductsService {
       return { name: category.name };
     });
 
-    return categories;
+    return { categories };
   }
 
   async findBrands() {
@@ -302,7 +302,7 @@ export class ProductsService {
       return { name: brand.name };
     });
 
-    return brands;
+    return { brands };
   }
 
   findOne(id: number) {
