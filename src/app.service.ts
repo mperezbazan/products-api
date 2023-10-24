@@ -1,20 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 const DATA = {
-  category: {
-    name: 'Category test',
-    description: 'Category test description',
-    images:
-      'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png',
-    products: [
-      {
-        id: 1,
-        name: 'Product test',
-      },
-    ],
-  },
-
-  items: [
+  products: [
     {
       sku: 10277,
       name: 'Product test',
@@ -25,8 +12,13 @@ const DATA = {
       currentValue: 10,
       unitType: 'unidad',
       unitQuantity: 10,
-      images:
-        'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png',
+      images: [
+        {
+          imageUrl:
+            'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png',
+          order: 1,
+        },
+      ],
       option1: 'Option 1',
       values1: 'Value 1',
       valueAddition1: 'Value addition 1',
