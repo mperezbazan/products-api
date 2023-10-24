@@ -1,7 +1,49 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+
+const BRANDS = {
+  brands: [
+    {
+      name: 'Anthelios',
+    },
+    {
+      name: 'Lavitan',
+    },
+    {
+      name: 'Isdin',
+    },
+    {
+      name: 'Mamypoko',
+    },
+  ],
+};
+
+const CATEGORIES = {
+  categories: [
+    {
+      name: 'Protetor Solar',
+    },
+    {
+      name: 'Nutricosméticos',
+    },
+    {
+      name: 'Protetor Solar',
+    },
+    {
+      name: 'Lenços Umedecidos',
+    },
+  ],
+};
 
 @Controller('products')
 export class ProductsController {
@@ -15,6 +57,16 @@ export class ProductsController {
   @Get()
   findAll() {
     return this.productsService.findAll();
+  }
+
+  @Get('brands')
+  findBrands() {
+    return BRANDS;
+  }
+
+  @Get('categories')
+  findCategories() {
+    return CATEGORIES;
   }
 
   @Get(':id')
