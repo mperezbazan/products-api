@@ -1,6 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
 const DATA = {
+  category: {
+    name: 'Category test',
+    description: 'Category test description',
+    images:
+      'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png',
+    products: [
+      {
+        id: 1,
+        name: 'Product test',
+      },
+    ],
+  },
+
   items: [
     {
       sku: 10277,
