@@ -305,7 +305,40 @@ export class ProductsService {
     return { brands };
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
+    const data = await firstValueFrom(
+      this.httpService
+        .get(
+          `${process.env.WC_URL}/wp-json/wc/v3/products/${id}?consumer_key=${process.env.WC_CONSUMER_KEY}&consumer_secret=${process.env.WC_CONSUMER_SECRET}&per_page=${process.env.WC_PER_PAGE}`,
+          {
+            headers: {
+              Accept: 'application/json',
+            },
+          },
+        )
+        .pipe(map((response) => response.data)),
+    );
+    if (!data) return null;
+
+    const images = data.images.map((image: Image) => {
+      return { imageUrl: image.src, order: image.id };
+    });
+
+    const product = {
+      name: data.name,
+      description: data.short_description,
+      originalValue: +data.price,
+      currentValue: data.sale_price ? +data.sale_price : +data.price,
+      category: data.categories[0].name || 'Sin Categoria',
+      brand: data.tags.length > 0 ? data.tags[0].name : '',
+      unitType: 'Unidad', //product.attributes[0].name,
+      unitQuantity: data.stock_quantity ? data.stock_quantity : 1,
+      extras: null,
+      images: images,
+      sku: data.id,
+    };
+
+    return product;
     return `This action returns a #${id} product`;
   }
 
