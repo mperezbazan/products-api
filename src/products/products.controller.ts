@@ -10,51 +10,18 @@ import {
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-
-const BRANDS = {
-  brands: [
-    {
-      name: 'Anthelios',
-    },
-    {
-      name: 'Lavitan',
-    },
-    {
-      name: 'Isdin',
-    },
-    {
-      name: 'Mamypoko',
-    },
-    {
-      name: 'Aretes',
-    },
-    {
-      name: 'Nuevo',
-    },
-    {
-      name: 'Topitos',
-    },
-  ],
-};
-
-const CATEGORIES = {
-  categories: [
-    {
-      name: 'Aretes',
-    },
-    {
-      name: 'Collares',
-    },
-  ],
-};
+import { SearchProductDto } from './dto/search-product.dto';
 
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productsService.create(createProductDto);
+  // create(@Body() createProductDto: CreateProductDto) {
+  //   return this.productsService.create(createProductDto);
+  // }
+  search(@Body() searchProductDto: SearchProductDto) {
+    return this.productsService.search(searchProductDto);
   }
 
   @Get()

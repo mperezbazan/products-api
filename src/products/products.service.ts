@@ -5,6 +5,7 @@ import { HttpService } from '@nestjs/axios/dist';
 import { Observable, catchError, firstValueFrom } from 'rxjs';
 import { AxiosResponse } from 'axios';
 import { map } from 'rxjs/operators';
+import { SearchProductDto } from './dto/search-product.dto';
 
 const DATA = {
   products: [
@@ -224,15 +225,56 @@ type BlipProduct = {
 @Injectable()
 export class ProductsService {
   constructor(private readonly httpService: HttpService) {}
-  create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
+  // create(createProductDto: CreateProductDto) {
+  //   return 'This action adds a new product';
+  // }
+
+  async search(searchProductDto: SearchProductDto) {
+    let criterio = '';
+    if (searchProductDto.filter) {
+      criterio = `&search=${searchProductDto.filter}`;
+    }
+    const data = await firstValueFrom(
+      this.httpService
+        .get(
+          `${process.env.WC_URL}/wp-json/wc/v3/products?consumer_key=${process.env.WC_CONSUMER_KEY}&consumer_secret=${process.env.WC_CONSUMER_SECRET}&status=publish&per_page=${process.env.WC_PER_PAGE}${criterio}`,
+          {
+            headers: {
+              Accept: 'application/json',
+            },
+          },
+        )
+        .pipe(map((response) => response.data)),
+    );
+    const products = data.map((product: Product) => {
+      const images = product.images.map((image: Image) => {
+        return { imageUrl: image.src, order: image.id };
+      });
+      const exportData = {
+        name: product.name,
+        description: product.short_description.replace(/<[^>]+>/g, ''),
+        originalValue: +product.price,
+        currentValue: product.sale_price ? +product.sale_price : +product.price,
+        category: product.categories[0].name || 'Sin Categoria',
+        brand: product.tags.length > 0 ? product.tags[0].name : '',
+        unitType: 'Unidad', //product.attributes[0].name,
+        unitQuantity: product.stock_quantity ? product.stock_quantity : 1,
+        extras: null,
+        images: images,
+        sku: product.id,
+      };
+
+      return exportData;
+    });
+
+    return { products };
   }
 
   async findAll() {
     const data = await firstValueFrom(
       this.httpService
         .get(
-          `${process.env.WC_URL}/wp-json/wc/v3/products?consumer_key=${process.env.WC_CONSUMER_KEY}&consumer_secret=${process.env.WC_CONSUMER_SECRET}&per_page=${process.env.WC_PER_PAGE}`,
+          `${process.env.WC_URL}/wp-json/wc/v3/products?consumer_key=${process.env.WC_CONSUMER_KEY}&consumer_secret=${process.env.WC_CONSUMER_SECRET}&status=publish&per_page=${process.env.WC_PER_PAGE}`,
           {
             headers: {
               Accept: 'application/json',
