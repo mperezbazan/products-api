@@ -17,8 +17,10 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  search(@Body() searchProductDto: SearchProductDto) {
-    return this.productsService.search(searchProductDto);
+  async search(@Body() searchProductDto: SearchProductDto) {
+    const products = await this.productsService.search(searchProductDto);
+    console.log(products);
+    return products;
   }
 
   @Get()
