@@ -234,6 +234,27 @@ export class ProductsService {
     if (searchProductDto.Filter) {
       criterio = `&search=${searchProductDto.Filter}`;
     }
+    if (searchProductDto.Categories.length > 0) {
+      const category = await this.findCategories().then((categories: any) => {
+        return categories.categories.find(
+          (category) => category.name === searchProductDto.Categories[0],
+        );
+      });
+      if (category) {
+        criterio += `&category=${category.id}`;
+      }
+    }
+    if (searchProductDto.Brands.length > 0) {
+      const brand = await this.findBrands().then((brands: any) => {
+        return brands.brands.find(
+          (brand) => brand.name === searchProductDto.Brands[0],
+        );
+      });
+      if (brand) {
+        criterio += `&tag=${brand.id}`;
+      }
+    }
+    console.log(criterio);
     const data = await firstValueFrom(
       this.httpService
         .get(
@@ -321,7 +342,7 @@ export class ProductsService {
         .pipe(map((response) => response.data)),
     );
     const categories = data.map((category: Tag) => {
-      return { name: category.name };
+      return { name: category.name, id: category.id };
     });
 
     return { categories };
@@ -341,7 +362,7 @@ export class ProductsService {
         .pipe(map((response) => response.data)),
     );
     const brands = data.map((brand: Tag) => {
-      return { name: brand.name };
+      return { name: brand.name, id: brand.id };
     });
 
     return { brands };
