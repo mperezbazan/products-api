@@ -19,7 +19,6 @@ export class ProductsController {
   @Post()
   async search(@Body() searchProductDto: SearchProductDto) {
     const products = await this.productsService.search(searchProductDto);
-    console.log(products);
     return products;
   }
 

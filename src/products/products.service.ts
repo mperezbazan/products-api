@@ -230,10 +230,9 @@ export class ProductsService {
   // }
 
   async search(searchProductDto: SearchProductDto) {
-    console.log(searchProductDto);
     let criterio = '';
-    if (searchProductDto.filter) {
-      criterio = `&search=${searchProductDto.filter}`;
+    if (searchProductDto.Filter) {
+      criterio = `&search=${searchProductDto.Filter}`;
     }
     const data = await firstValueFrom(
       this.httpService
