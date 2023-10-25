@@ -247,7 +247,7 @@ export class ProductsService {
       });
       const exportData = {
         name: product.name,
-        description: product.short_description,
+        description: product.short_description.replace(/<[^>]+>/g, ''),
         originalValue: +product.price,
         currentValue: product.sale_price ? +product.sale_price : +product.price,
         category: product.categories[0].name || 'Sin Categoria',
@@ -326,7 +326,7 @@ export class ProductsService {
 
     const product = {
       name: data.name,
-      description: data.short_description,
+      description: data.short_description.replace(/<[^>]+>/g, ''),
       originalValue: +data.price,
       currentValue: data.sale_price ? +data.sale_price : +data.price,
       category: data.categories[0].name || 'Sin Categoria',
