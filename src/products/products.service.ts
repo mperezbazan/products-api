@@ -233,6 +233,7 @@ export class ProductsService {
     let criterio = '';
     if (searchProductDto.filter) {
       criterio = `&search=${searchProductDto.filter}`;
+      return criterio;
     }
     const data = await firstValueFrom(
       this.httpService
