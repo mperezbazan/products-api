@@ -322,12 +322,7 @@ export class ProductsService {
         brand: product.tags.length > 0 ? product.tags[0].name : '',
         unitType: 'Unidad', //product.attributes[0].name,
         unitQuantity: product.stock_quantity ? product.stock_quantity : 1,
-        extras: [
-          {
-            variable: 'Talla',
-            values: 'S',
-          },
-        ],
+        extras: null,
         images: images,
         sku: product.id,
       };
