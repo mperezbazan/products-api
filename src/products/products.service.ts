@@ -325,7 +325,7 @@ export class ProductsService {
         extras: [
           {
             variable: 'Talla',
-            values: ['S', 'M', 'L'],
+            values: 'S',
           },
         ],
         images: images,
