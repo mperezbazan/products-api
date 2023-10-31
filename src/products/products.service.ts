@@ -288,7 +288,9 @@ export class ProductsService {
       return exportData;
     });
 
-    return { products };
+    return {
+      products: products.filter((product) => product.unitQuantity != null),
+    };
   }
 
   async findAll() {
@@ -316,7 +318,7 @@ export class ProductsService {
         category: product.categories[0].name || 'Sin Categoria',
         brand: product.tags.length > 0 ? product.tags[0].name : '',
         unitType: 'Unidad', //product.attributes[0].name,
-        unitQuantity: product.stock_quantity ? product.stock_quantity : 1,
+        unitQuantity: product.stock_quantity,
         extras: null,
         images: images,
         sku: product.id,
@@ -325,7 +327,9 @@ export class ProductsService {
       return exportData;
     });
 
-    return { products };
+    return {
+      products: products.filter((product) => product.unitQuantity != null),
+    };
   }
 
   async findCategories() {
