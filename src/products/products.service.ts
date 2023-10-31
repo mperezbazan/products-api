@@ -330,7 +330,7 @@ export class ProductsService {
       return exportData;
     });
 
-    return { products };
+    return { products: DATA };
   }
 
   async findCategories() {
@@ -350,7 +350,7 @@ export class ProductsService {
       return { name: category.name };
     });
 
-    return { categories };
+    return { categories: { name: 'test' } };
   }
 
   async findBrands() {
@@ -370,7 +370,7 @@ export class ProductsService {
       return { name: brand.name };
     });
 
-    return { brands };
+    return { brands: { name: 'test' } };
   }
 
   async findOne(id: number) {
