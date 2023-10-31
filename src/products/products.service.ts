@@ -330,7 +330,7 @@ export class ProductsService {
       return exportData;
     });
 
-    return { products };
+    return { products: DATA };
   }
 
   async findCategories() {
