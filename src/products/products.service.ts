@@ -382,7 +382,9 @@ export class ProductsService {
       }),
     );
     if ((await products).length > 0) {
-      return finalProducts.sort((a, b) => a.name.localeCompare(b.name));
+      return {
+        products: finalProducts.sort((a, b) => a.name.localeCompare(b.name)),
+      };
     }
     // return products;
   }
