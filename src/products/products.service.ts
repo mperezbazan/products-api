@@ -298,7 +298,7 @@ export class ProductsService {
                 return `${dictionary[attribute.name]}: ${attribute.option}`;
               });
               const exportData = {
-                name: `${product.name}\n${attributes.join('\n')}`,
+                name: `${product.name} | ${attributes.join(' | ')}`,
                 description: `${product.short_description.replace(
                   /<[^>]+>/g,
                   '',
@@ -395,7 +395,7 @@ export class ProductsService {
                 return `${dictionary[attribute.name]}: ${attribute.option}`;
               });
               const exportData = {
-                name: `${product.name}\n${attributes.join('\n')}`,
+                name: `${product.name} | ${attributes.join(' | ')}`,
                 description: `${product.short_description.replace(
                   /<[^>]+>/g,
                   '',
