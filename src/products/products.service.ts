@@ -330,7 +330,7 @@ export class ProductsService {
       return exportData;
     });
 
-    return { products: DATA };
+    return { products };
   }
 
   async findCategories() {
@@ -347,7 +347,7 @@ export class ProductsService {
         .pipe(map((response) => response.data)),
     );
     const categories = data.map((category: Tag) => {
-      return { name: category.name, id: category.id };
+      return { name: category.name };
     });
 
     return { categories };
@@ -367,7 +367,7 @@ export class ProductsService {
         .pipe(map((response) => response.data)),
     );
     const brands = data.map((brand: Tag) => {
-      return { name: brand.name, id: brand.id };
+      return { name: brand.name };
     });
 
     return { brands };
