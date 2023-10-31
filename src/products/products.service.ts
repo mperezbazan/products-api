@@ -306,30 +306,85 @@ export class ProductsService {
         )
         .pipe(map((response) => response.data)),
     );
-    const products = data.map((product: Product) => {
-      const images = product.images.map((image: Image) => {
-        return { imageUrl: image.src, order: image.id };
-      });
-      const exportData = {
-        name: product.name,
-        description: product.short_description.replace(/<[^>]+>/g, ''),
-        originalValue: +product.price,
-        currentValue: product.sale_price ? +product.sale_price : +product.price,
-        category: product.categories[0].name || 'Sin Categoria',
-        brand: product.tags.length > 0 ? product.tags[0].name : '',
-        unitType: 'Unidad', //product.attributes[0].name,
-        unitQuantity: product.stock_quantity,
-        extras: null,
-        images: images,
-        sku: product.id,
-      };
-
-      return exportData;
-    });
-
-    return {
-      products: products.filter((product) => product.unitQuantity != null),
-    };
+    const finalProducts = [];
+    const products = Promise.all(
+      data.map(async (product: Product) => {
+        const images = product.images.map((image: Image) => {
+          return { imageUrl: image.src, order: image.id };
+        });
+        if (product.variations.length > 0) {
+          const data = await firstValueFrom(
+            this.httpService
+              .get(
+                `${process.env.WC_URL}/wp-json/wc/v3/products/${product.id}/variations?consumer_key=${process.env.WC_CONSUMER_KEY}&consumer_secret=${process.env.WC_CONSUMER_SECRET}&status=publish&per_page=${process.env.WC_PER_PAGE}`,
+                {
+                  headers: {
+                    Accept: 'application/json',
+                  },
+                },
+              )
+              .pipe(map((response) => response.data)),
+          );
+          Promise.all(
+            data.map((variation: any) => {
+              const attributes = variation.attributes.map((attribute: any) => {
+                return `${attribute.name}: ${attribute.option}`;
+              });
+              const exportData = {
+                name: `${product.name} ${attributes.join(' ')}`,
+                description: `${product.short_description.replace(
+                  /<[^>]+>/g,
+                  '',
+                )}\n${attributes.join('\n')}`,
+                originalValue: +variation.price,
+                currentValue: variation.sale_price
+                  ? +variation.sale_price
+                  : +variation.price,
+                //category: product.categories[0].name || 'Sin Categoria',
+                // brand: product.tags?.length > 0 ? variation.tags[0].name : '',
+                unitType: 'Unidad', //product.attributes[0].name,
+                unitQuantity: variation.stock_quantity,
+                extras: null,
+                images: [
+                  {
+                    imageUrl: variation.image.src,
+                    order: variation.image.id,
+                  },
+                ],
+                sku: variation.id,
+              };
+              if (exportData.unitQuantity > 0) {
+                finalProducts.push(exportData);
+              }
+            }),
+          );
+        } else {
+          const exportData = {
+            name: product.name,
+            description: product.short_description.replace(/<[^>]+>/g, ''),
+            originalValue: +product.price,
+            currentValue: product.sale_price
+              ? +product.sale_price
+              : +product.price,
+            category: product.categories[0].name || 'Sin Categoria',
+            brand: product.tags.length > 0 ? product.tags[0].name : '',
+            unitType: 'Unidad', //product.attributes[0].name,
+            unitQuantity: product.stock_quantity,
+            extras: null,
+            images: images,
+            sku: product.id,
+          };
+          if (exportData.unitQuantity > 0) {
+            finalProducts.push(exportData);
+          }
+        }
+        return finalProducts;
+      }),
+    );
+    if ((await products).length > 0) {
+      return finalProducts.sort((a, b) => a.name.localeCompare(b.name));
+    }
+    // return products;
   }
 
   async findCategories() {
