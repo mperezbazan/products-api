@@ -280,12 +280,7 @@ export class ProductsService {
         brand: product.tags.length > 0 ? product.tags[0].name : '',
         unitType: 'Unidad', //product.attributes[0].name,
         unitQuantity: product.stock_quantity ? product.stock_quantity : 1,
-        extras: [
-          {
-            variable: 'Talla',
-            values: ['S', 'M', 'L'],
-          },
-        ],
+        extras: null,
         images: images,
         sku: product.id,
       };
@@ -330,7 +325,7 @@ export class ProductsService {
       return exportData;
     });
 
-    return { products: DATA };
+    return { products };
   }
 
   async findCategories() {
@@ -350,7 +345,7 @@ export class ProductsService {
       return { name: category.name };
     });
 
-    return { categories: { name: 'test' } };
+    return { categories };
   }
 
   async findBrands() {
@@ -370,7 +365,7 @@ export class ProductsService {
       return { name: brand.name };
     });
 
-    return { brands: { name: 'test' } };
+    return { brands };
   }
 
   async findOne(id: number) {
