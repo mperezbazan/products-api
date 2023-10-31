@@ -342,7 +342,7 @@ export class ProductsService {
         .pipe(map((response) => response.data)),
     );
     const categories = data.map((category: Tag) => {
-      return { name: category.name };
+      return { name: category.name, id: category.id };
     });
 
     return { categories };
@@ -362,7 +362,7 @@ export class ProductsService {
         .pipe(map((response) => response.data)),
     );
     const brands = data.map((brand: Tag) => {
-      return { name: brand.name };
+      return { name: brand.name, id: brand.id };
     });
 
     return { brands };
