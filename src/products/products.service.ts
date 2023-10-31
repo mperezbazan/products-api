@@ -222,6 +222,12 @@ type BlipProduct = {
   images: BlipImage[];
   sku: string;
 };
+const dictionary = {
+  Tamaños: 'Tamaño',
+  Colores: 'Color',
+  Topitos: 'Topito',
+  Letras: 'Letra',
+};
 @Injectable()
 export class ProductsService {
   constructor(private readonly httpService: HttpService) {}
@@ -289,10 +295,10 @@ export class ProductsService {
           Promise.all(
             data.map((variation: any) => {
               const attributes = variation.attributes.map((attribute: any) => {
-                return `${attribute.name}: ${attribute.option}`;
+                return `${dictionary[attribute.name]}: ${attribute.option}`;
               });
               const exportData = {
-                name: `${product.name} ${attributes.join(' ')}`,
+                name: `${product.name}\n${attributes.join('\n')}`,
                 description: `${product.short_description.replace(
                   /<[^>]+>/g,
                   '',
@@ -386,10 +392,10 @@ export class ProductsService {
           Promise.all(
             data.map((variation: any) => {
               const attributes = variation.attributes.map((attribute: any) => {
-                return `${attribute.name}: ${attribute.option}`;
+                return `${dictionary[attribute.name]}: ${attribute.option}`;
               });
               const exportData = {
-                name: `${product.name} ${attributes.join(' ')}`,
+                name: `${product.name}\n${attributes.join('\n')}`,
                 description: `${product.short_description.replace(
                   /<[^>]+>/g,
                   '',
