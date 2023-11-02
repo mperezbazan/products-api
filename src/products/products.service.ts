@@ -511,12 +511,39 @@ export class ProductsService {
     const images = data.images.map((image: Image) => {
       return { imageUrl: image.src, order: image.id };
     });
+    let description = data.short_description.replace(/<[^>]+>/g, '');
+    let category = data.categories[0]?.name || 'Sin Categoria';
+
+    if (data.type === 'variation') {
+      const attributes = data.attributes.map((attribute: any) => {
+        return `${dictionary[attribute.name]}: ${attribute.option}`;
+      });
+      const res = await firstValueFrom(
+        this.httpService
+          .get(
+            `${process.env.WC_URL}/wp-json/wc/v3/products/${data.parent_id}?consumer_key=${process.env.WC_CONSUMER_KEY}&consumer_secret=${process.env.WC_CONSUMER_SECRET}&per_page=${process.env.WC_PER_PAGE}`,
+            {
+              headers: {
+                Accept: 'application/json',
+              },
+            },
+          )
+          .pipe(map((response) => response.data)),
+      );
+
+      description = `${res.short_description.replace(
+        /<[^>]+>/g,
+        '',
+      )}\n${attributes.join('\n')} `;
+      category = res.categories[0]?.name || 'Sin Categoria';
+    }
+
     const product = {
       name: data.name,
-      description: data.short_description.replace(/<[^>]+>/g, ''),
+      description: description,
       originalValue: +data.price,
       currentValue: data.sale_price ? +data.sale_price : +data.price,
-      category: data.categories[0]?.name || 'Sin Categoria',
+      category: category,
       brand: data.tags.length > 0 ? data.tags[0].name : '',
       unitType: 'Unidad', //product.attributes[0].name,
       unitQuantity: data.stock_quantity ? data.stock_quantity : 1,
