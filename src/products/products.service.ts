@@ -320,7 +320,7 @@ export class ProductsService {
                 ],
                 sku: variation.id,
               };
-              if (exportData.unitQuantity != null) {
+              if (variation.stock_status === 'instock') {
                 finalProducts.push(exportData);
               }
             }),
@@ -341,7 +341,7 @@ export class ProductsService {
             images: images,
             sku: product.id,
           };
-          if (exportData.unitQuantity > 0) {
+          if (product.stock_status === 'instock') {
             finalProducts.push(exportData);
             return exportData;
           }
@@ -417,7 +417,7 @@ export class ProductsService {
                 ],
                 sku: variation.id,
               };
-              if (exportData.unitQuantity != null) {
+              if (variation.stock_status === 'instock') {
                 finalProducts.push(exportData);
               }
             }),
@@ -438,7 +438,7 @@ export class ProductsService {
             images: images,
             sku: product.id,
           };
-          if (exportData.unitQuantity > 0) {
+          if (product.stock_status === 'instock') {
             finalProducts.push(exportData);
           }
         }

@@ -164,7 +164,7 @@ let ProductsService = class ProductsService {
                         ],
                         sku: variation.id,
                     };
-                    if (exportData.unitQuantity != null) {
+                    if (variation.stock_status === 'instock') {
                         finalProducts.push(exportData);
                     }
                 }));
@@ -185,7 +185,7 @@ let ProductsService = class ProductsService {
                     images: images,
                     sku: product.id,
                 };
-                if (exportData.unitQuantity > 0) {
+                if (product.stock_status === 'instock') {
                     finalProducts.push(exportData);
                     return exportData;
                 }
@@ -241,7 +241,7 @@ let ProductsService = class ProductsService {
                         ],
                         sku: variation.id,
                     };
-                    if (exportData.unitQuantity != null) {
+                    if (variation.stock_status === 'instock') {
                         finalProducts.push(exportData);
                     }
                 }));
@@ -262,7 +262,7 @@ let ProductsService = class ProductsService {
                     images: images,
                     sku: product.id,
                 };
-                if (exportData.unitQuantity > 0) {
+                if (product.stock_status === 'instock') {
                     finalProducts.push(exportData);
                 }
             }
