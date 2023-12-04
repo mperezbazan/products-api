@@ -12,7 +12,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { SearchProductDto } from './dto/search-product.dto';
 
-@Controller('muett/products')
+@Controller('muett/api/products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
