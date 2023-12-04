@@ -14,130 +14,48 @@ const common_1 = require("@nestjs/common");
 const dist_1 = require("@nestjs/axios/dist");
 const rxjs_1 = require("rxjs");
 const operators_1 = require("rxjs/operators");
-const DATA = {
-    products: [
-        {
-            name: 'TOPITOS JERUSALEN',
-            description: 'Topitos Plateados, divinos para usar en el día a día y para combinarlos con mas aretes. Es tendencia!</p> <p><em><strong>(Precio por par)</strong></em></p> <p><strong>Material:</strong> Acero</p> <p><strong>Color:</strong> Plateado</p> <p><strong>Cuidados:</strong> Recomendamos guardar por separado cada accesorio, almacenarlos en lugares secos y a temperatura ambiente; limpiarlos con un pañito o franela y sin ningún tipo de producto, evitar contacto con productos químicos como cremas y perfumes, no dormir ni bañarse con ellos. La durabilidad de los accesorios depende 100% del cuidado de cada persona.</p>',
-            originalValue: 20000,
-            currentValue: 20000,
-            category: 'Aretes',
-            brand: 'Topitos',
-            unitType: '',
-            unitQuantity: 150,
-            extras: null,
-            images: [
-                {
-                    imageUrl: 'https://anele.com.co/wp-content/uploads/2023/08/9.jpg',
-                    order: 1,
-                },
-            ],
-            sku: '9308',
-        },
-        {
-            name: 'CADENITA LETRAS',
-            description: '<p>Cadenita dorada, básica con dije de letra ideal para usar solita o con mas cadenitas.! Es DIVINA! Y lo mejor, es ajustable y puedes usarla de acuerdo a tu gusto, larga o corta!</p> <p><strong><em>(Precio por unidad)</em></strong></p> <p><strong>Material:</strong> Rodio</p> <p><strong>Medidas:</strong> 45 cms</p> <div class="woocommerce-product-details__short-description"> <p><b>Cuidados</b><strong>: </strong>Recomendamos guardar por separado cada accesorio, almacenarlos en lugares secos y a temperatura ambiente; limpiarlos con un pañito o franela y sin ningún tipo de producto, evitar contacto con productos químicos como cremas y perfumes, no dormir ni bañarse con ellos. La durabilidad de los accesorios depende 100% del cuidado de cada persona.</p> </div> ',
-            originalValue: 28000,
-            currentValue: 28000,
-            category: 'Collares',
-            brand: 'Nuevo',
-            unitType: '',
-            unitQuantity: 150,
-            extras: null,
-            images: [
-                {
-                    imageUrl: 'https://anele.com.co/wp-content/uploads/2023/08/LETRAS-C-1.jpg',
-                    order: 1,
-                },
-            ],
-            sku: 'cde',
-        },
-        {
-            name: 'Protetor Solar Facial Isdin Fusion Water Oil Control FPS 60 com 30ml',
-            description: 'Fusion Water 5 Stars é um protetor solar facial especialmente criado para o uso diário. Com FPS 60 garante muito alta proteção.',
-            originalValue: 69.99,
-            currentValue: 69.99,
-            category: 'Protetor Solar',
-            brand: 'Isdin',
-            unitType: '',
-            unitQuantity: 150,
-            extras: null,
-            images: [
-                {
-                    imageUrl: 'https://s3-sa-east-1.amazonaws.com/i.imgtake.takenet.com.br/ii0mntjaiq/ii0mntjaiq.png',
-                    order: 1,
-                },
-            ],
-            sku: 'egv',
-        },
-        {
-            name: 'Toalhas Umedecidas MamyPoko Dia e Noite 200 Unidades',
-            description: '',
-            originalValue: 25.49,
-            currentValue: 24.49,
-            category: 'Lenços Umedecidos',
-            brand: 'Mamypoko',
-            unitType: '',
-            unitQuantity: 150,
-            extras: null,
-            images: [
-                {
-                    imageUrl: 'https://s3-sa-east-1.amazonaws.com/i.imgtake.takenet.com.br/isldfab19m/isldfab19m.png',
-                    order: 1,
-                },
-            ],
-            sku: 'eghv',
-        },
-    ],
-};
-const dictionary = {
-    Tamaños: 'Tamaño',
-    Colores: 'Color',
-    Topitos: 'Topito',
-    Letras: 'Letra',
-};
 let ProductsService = class ProductsService {
     constructor(httpService) {
         this.httpService = httpService;
     }
     async search(searchProductDto) {
-        oo_alm(`3718963261_238_15_238_49_1`, searchProductDto);
-        let criterio = oo_al('', `3718963261_239_19_239_21_1`);
-        if ((oo_al(searchProductDto.Filter, `3718963261_240_8_240_31_1`), searchProductDto.Filter)) {
-            oo_al(criterio = `&search=${searchProductDto.Filter}`, `3718963261_241_6_241_53_1`);
+        oo_alm(`3180740193_155_15_155_49_1`, searchProductDto);
+        let criterio = oo_al('', `3180740193_156_19_156_21_1`);
+        if ((oo_al(searchProductDto.Filter, `3180740193_157_8_157_31_1`), searchProductDto.Filter)) {
+            oo_al(criterio = `&search=${searchProductDto.Filter}`, `3180740193_158_6_158_53_1`);
         }
-        if (oo_al(searchProductDto.Categories.length > 0, `3718963261_243_8_243_46_1`)) {
+        if (oo_al(searchProductDto.Categories.length > 0, `3180740193_160_8_160_46_1`)) {
             const category = oo_al(await this.findCategories().then((categories) => {
                 return categories.categories.find((category) => category.name === searchProductDto.Categories[0]);
-            }), `3718963261_244_23_248_8_1`);
-            if ((oo_al(category, `3718963261_249_10_249_18_1`), category)) {
-                oo_al(criterio += `&category=${category.id}`, `3718963261_250_8_250_46_1`);
+            }), `3180740193_161_23_165_8_1`);
+            if ((oo_al(category, `3180740193_166_10_166_18_1`), category)) {
+                oo_al(criterio += `&category=${category.id}`, `3180740193_167_8_167_46_1`);
             }
         }
-        if (oo_al(searchProductDto.Brands.length > 0, `3718963261_253_8_253_42_1`)) {
+        if (oo_al(searchProductDto.Brands.length > 0, `3180740193_170_8_170_42_1`)) {
             const brand = oo_al(await this.findBrands().then((brands) => {
                 return brands.brands.find((brand) => brand.name === searchProductDto.Brands[0]);
-            }), `3718963261_254_20_258_8_1`);
-            if ((oo_al(brand, `3718963261_259_10_259_15_1`), brand)) {
-                oo_al(criterio += `&tag=${brand.id}`, `3718963261_260_8_260_38_1`);
+            }), `3180740193_171_20_175_8_1`);
+            if ((oo_al(brand, `3180740193_176_10_176_15_1`), brand)) {
+                oo_al(criterio += `&tag=${brand.id}`, `3180740193_177_8_177_38_1`);
             }
         }
-        console.log(...oo_oo(`3718963261_263_4_263_25_4`, criterio));
+        console.log(...oo_oo(`3180740193_180_4_180_25_4`, criterio));
         const data = oo_al(await (0, rxjs_1.firstValueFrom)(oo_al(this.httpService
-            .get(oo_al(`${process.env.WC_URL}/wp-json/wc/v3/products?consumer_key=${process.env.WC_CONSUMER_KEY}&consumer_secret=${process.env.WC_CONSUMER_SECRET}&status=publish&per_page=${process.env.WC_PER_PAGE}${criterio}`, `3718963261_267_10_267_212_1`), oo_al({
+            .get(oo_al(`${process.env.MUET_WC_URL}/wp-json/wc/v3/products?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=${process.env.MUET_WC_CONSUMER_SECRET}&status=publish&per_page=${process.env.WC_PER_PAGE}${criterio}`, `3180740193_184_10_184_227_1`), oo_al({
             headers: oo_al({
-                Accept: (oo_al('application/json', `3718963261_270_22_270_40_1`), 'application/json'),
-            }, `3718963261_269_21_271_13_1`),
-        }, `3718963261_268_10_272_11_1`)), `3718963261_265_6_273_9_1`)
-            .pipe((0, operators_1.map)((response) => response.data))), `3718963261_264_17_275_5_1`);
-        const finalProducts = oo_al([], `3718963261_276_26_276_28_1`);
+                Accept: (oo_al('application/json', `3180740193_187_22_187_40_1`), 'application/json'),
+            }, `3180740193_186_21_188_13_1`),
+        }, `3180740193_185_10_189_11_1`)), `3180740193_182_6_190_9_1`)
+            .pipe((0, operators_1.map)((response) => response.data))), `3180740193_181_17_192_5_1`);
+        const finalProducts = oo_al([], `3180740193_193_26_193_28_1`);
         const products = oo_al(Promise.all(oo_al(data.map(async (product) => {
             const images = product.images.map((image) => {
                 return { imageUrl: image.src, order: image.id };
             });
             if (product.variations.length > 0) {
                 const data = await (0, rxjs_1.firstValueFrom)(this.httpService
-                    .get(`${process.env.WC_URL}/wp-json/wc/v3/products/${product.id}/variations?consumer_key=${process.env.WC_CONSUMER_KEY}&consumer_secret=${process.env.WC_CONSUMER_SECRET}&status=publish&per_page=${process.env.WC_PER_PAGE}`, {
+                    .get(`${process.env.MUET_WC_URL}/wp-json/wc/v3/products/${product.id}/variations?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=${process.env.MUET_WC_CONSUMER_SECRET}&status=publish&per_page=${process.env.WC_PER_PAGE}`, {
                     headers: {
                         Accept: 'application/json',
                     },
@@ -145,7 +63,7 @@ let ProductsService = class ProductsService {
                     .pipe((0, operators_1.map)((response) => response.data)));
                 Promise.all(data.map((variation) => {
                     const attributes = variation.attributes.map((attribute) => {
-                        return `${dictionary[attribute.name]}: ${attribute.option}`;
+                        return `${attribute.name}: ${attribute.option}`;
                     });
                     const exportData = {
                         name: `${product.name} | ${attributes.join(' | ')}`,
@@ -192,16 +110,16 @@ let ProductsService = class ProductsService {
                 }
             }
             return null;
-        }), `3718963261_278_6_350_8_1`)), `3718963261_277_21_351_5_1`);
-        if (oo_al((await products).length > 0, `3718963261_353_8_353_35_1`)) {
+        }), `3180740193_195_6_267_8_1`)), `3180740193_194_21_268_5_1`);
+        if (oo_al((await products).length > 0, `3180740193_270_8_270_35_1`)) {
             return oo_al({
-                products: oo_al(finalProducts.sort((a, b) => a.name.localeCompare(b.name)), `3718963261_355_18_355_76_1`),
-            }, `3718963261_354_6_356_8_1`);
+                products: oo_al(finalProducts.sort((a, b) => a.name.localeCompare(b.name)), `3180740193_272_18_272_76_1`),
+            }, `3180740193_271_6_273_8_1`);
         }
     }
     async findAll() {
         const data = await (0, rxjs_1.firstValueFrom)(this.httpService
-            .get(`${process.env.WC_URL}/wp-json/wc/v3/products?consumer_key=${process.env.WC_CONSUMER_KEY}&consumer_secret=${process.env.WC_CONSUMER_SECRET}&status=publish&per_page=${process.env.WC_PER_PAGE}`, {
+            .get(`${process.env.MUET_WC_URL}/wp-json/wc/v3/products?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=${process.env.MUET_WC_CONSUMER_SECRET}&status=publish&per_page=${process.env.WC_PER_PAGE}&stock_status=instock`, {
             headers: {
                 Accept: 'application/json',
             },
@@ -214,7 +132,7 @@ let ProductsService = class ProductsService {
             });
             if (product.variations.length > 0) {
                 const data = await (0, rxjs_1.firstValueFrom)(this.httpService
-                    .get(`${process.env.WC_URL}/wp-json/wc/v3/products/${product.id}/variations?consumer_key=${process.env.WC_CONSUMER_KEY}&consumer_secret=${process.env.WC_CONSUMER_SECRET}&status=publish&per_page=${process.env.WC_PER_PAGE}`, {
+                    .get(`${process.env.MUET_WC_URL}/wp-json/wc/v3/products/${product.id}/variations?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=${process.env.MUET_WC_CONSUMER_SECRET}&status=publish&per_page=${process.env.WC_PER_PAGE}`, {
                     headers: {
                         Accept: 'application/json',
                     },
@@ -222,7 +140,7 @@ let ProductsService = class ProductsService {
                     .pipe((0, operators_1.map)((response) => response.data)));
                 Promise.all(data.map((variation) => {
                     const attributes = variation.attributes.map((attribute) => {
-                        return `${dictionary[attribute.name]}: ${attribute.option}`;
+                        return `${attribute.name}: ${attribute.option}`;
                     });
                     const exportData = {
                         name: `${product.name} | ${attributes.join(' | ')}`,
@@ -277,7 +195,7 @@ let ProductsService = class ProductsService {
     }
     async findCategories() {
         const data = await (0, rxjs_1.firstValueFrom)(this.httpService
-            .get(`${process.env.WC_URL}/wp-json/wc/v3/products/categories?consumer_key=${process.env.WC_CONSUMER_KEY}&consumer_secret=${process.env.WC_CONSUMER_SECRET}&per_page=${process.env.WC_PER_PAGE}`, {
+            .get(`${process.env.MUET_WC_URL}/wp-json/wc/v3/products/categories?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=${process.env.MUET_WC_CONSUMER_SECRET}&per_page=${process.env.WC_PER_PAGE}`, {
             headers: {
                 Accept: 'application/json',
             },
@@ -290,7 +208,7 @@ let ProductsService = class ProductsService {
     }
     async findBrands() {
         const data = await (0, rxjs_1.firstValueFrom)(this.httpService
-            .get(`${process.env.WC_URL}/wp-json/wc/v3/products/tags?consumer_key=${process.env.WC_CONSUMER_KEY}&consumer_secret=${process.env.WC_CONSUMER_SECRET}&per_page=${process.env.WC_PER_PAGE}`, {
+            .get(`${process.env.MUET_WC_URL}/wp-json/wc/v3/products/tags?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=${process.env.MUET_WC_CONSUMER_SECRET}&per_page=${process.env.WC_PER_PAGE}`, {
             headers: {
                 Accept: 'application/json',
             },
@@ -304,7 +222,7 @@ let ProductsService = class ProductsService {
     async findOne(id) {
         var _a, _b;
         const data = await (0, rxjs_1.firstValueFrom)(this.httpService
-            .get(`${process.env.WC_URL}/wp-json/wc/v3/products/${id}?consumer_key=${process.env.WC_CONSUMER_KEY}&consumer_secret=${process.env.WC_CONSUMER_SECRET}&per_page=${process.env.WC_PER_PAGE}`, {
+            .get(`${process.env.MUET_WC_URL}/wp-json/wc/v3/products/${id}?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=${process.env.MUET_WC_CONSUMER_SECRET}&per_page=${process.env.WC_PER_PAGE}`, {
             headers: {
                 Accept: 'application/json',
             },
@@ -319,10 +237,10 @@ let ProductsService = class ProductsService {
         let category = ((_a = data.categories[0]) === null || _a === void 0 ? void 0 : _a.name) || 'Sin Categoria';
         if (data.type === 'variation') {
             const attributes = data.attributes.map((attribute) => {
-                return `${dictionary[attribute.name]}: ${attribute.option}`;
+                return `${attribute.name}: ${attribute.option}`;
             });
             const res = await (0, rxjs_1.firstValueFrom)(this.httpService
-                .get(`${process.env.WC_URL}/wp-json/wc/v3/products/${data.parent_id}?consumer_key=${process.env.WC_CONSUMER_KEY}&consumer_secret=${process.env.WC_CONSUMER_SECRET}&per_page=${process.env.WC_PER_PAGE}`, {
+                .get(`${process.env.MUET_WC_URL}/wp-json/wc/v3/products/${data.parent_id}?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=${process.env.MUET_WC_CONSUMER_SECRET}&per_page=${process.env.WC_PER_PAGE}`, {
                 headers: {
                     Accept: 'application/json',
                 },

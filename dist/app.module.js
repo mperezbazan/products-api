@@ -13,12 +13,18 @@ const app_service_1 = require("./app.service");
 const products_module_1 = require("./products/products.module");
 const config_1 = require("@nestjs/config");
 const cart_module_1 = require("./cart/cart.module");
+const products_module_2 = require("./muet/products/products.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [config_1.ConfigModule.forRoot(), products_module_1.ProductsModule, cart_module_1.CartModule],
+        imports: [
+            config_1.ConfigModule.forRoot(),
+            products_module_1.ProductsModule,
+            cart_module_1.CartModule,
+            products_module_2.MuetProductsModule,
+        ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })
