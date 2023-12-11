@@ -214,7 +214,7 @@ export class ProductsService {
               const attributes = variation.attributes.map((attribute: any) => {
                 return `${attribute.name}: ${attribute.option}`;
               });
-              let currentValue = +product.price;
+              let currentValue = +variation.price;
 
               if (variation.sale_price) {
                 currentValue = +variation.sale_price;
