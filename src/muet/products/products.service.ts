@@ -220,15 +220,17 @@ export class ProductsService {
                 currentValue = +variation.sale_price;
               } else {
                 const htmlPrice = variation.price_html;
-                const htmlPriceArray = htmlPrice.split('<del>');
+                if (htmlPrice) {
+                  const htmlPriceArray = htmlPrice.split('<del>');
 
-                if (htmlPriceArray.length > 1) {
-                  const price = htmlPriceArray[1].split('</span>');
-                  currentValue = +price[price.length - 2].replace(
-                    /[^0-9.-]+/g,
-                    '',
-                  );
-                  currentValue = currentValue * 1000;
+                  if (htmlPriceArray.length > 1) {
+                    const price = htmlPriceArray[1].split('</span>');
+                    currentValue = +price[price.length - 2].replace(
+                      /[^0-9.-]+/g,
+                      '',
+                    );
+                    currentValue = currentValue * 1000;
+                  }
                 }
               }
               const exportData = {
@@ -264,12 +266,17 @@ export class ProductsService {
             currentValue = +product.sale_price;
           } else {
             const htmlPrice = product.price_html;
-            const htmlPriceArray = htmlPrice.split('<del>');
+            if (htmlPrice) {
+              const htmlPriceArray = htmlPrice.split('<del>');
 
-            if (htmlPriceArray.length > 1) {
-              const price = htmlPriceArray[1].split('</span>');
-              currentValue = +price[price.length - 2].replace(/[^0-9.-]+/g, '');
-              currentValue = currentValue * 1000;
+              if (htmlPriceArray.length > 1) {
+                const price = htmlPriceArray[1].split('</span>');
+                currentValue = +price[price.length - 2].replace(
+                  /[^0-9.-]+/g,
+                  '',
+                );
+                currentValue = currentValue * 1000;
+              }
             }
           }
           const exportData = {
@@ -345,14 +352,16 @@ export class ProductsService {
                 currentValue = +variation.sale_price;
               } else {
                 const htmlPrice = variation.price_html;
-                const htmlPriceArray = htmlPrice.split('<del>');
-                if (htmlPriceArray.length > 1) {
-                  const price = htmlPriceArray[1].split('</span>');
-                  currentValue = +price[price.length - 2].replace(
-                    /[^0-9.-]+/g,
-                    '',
-                  );
-                  currentValue = currentValue * 1000;
+                if (htmlPrice) {
+                  const htmlPriceArray = htmlPrice.split('<del>');
+                  if (htmlPriceArray.length > 1) {
+                    const price = htmlPriceArray[1].split('</span>');
+                    currentValue = +price[price.length - 2].replace(
+                      /[^0-9.-]+/g,
+                      '',
+                    );
+                    currentValue = currentValue * 1000;
+                  }
                 }
               }
               const exportData = {
@@ -392,12 +401,17 @@ export class ProductsService {
             currentValue = +product.sale_price;
           } else {
             const htmlPrice = product.price_html;
-            const htmlPriceArray = htmlPrice.split('<del>');
+            if (htmlPrice) {
+              const htmlPriceArray = htmlPrice.split('<del>');
 
-            if (htmlPriceArray.length > 1) {
-              const price = htmlPriceArray[1].split('</span>');
-              currentValue = +price[price.length - 2].replace(/[^0-9.-]+/g, '');
-              currentValue = currentValue * 1000;
+              if (htmlPriceArray.length > 1) {
+                const price = htmlPriceArray[1].split('</span>');
+                currentValue = +price[price.length - 2].replace(
+                  /[^0-9.-]+/g,
+                  '',
+                );
+                currentValue = currentValue * 1000;
+              }
             }
           }
           const exportData = {
@@ -522,11 +536,13 @@ export class ProductsService {
       currentValue = +data.sale_price;
     } else {
       const htmlPrice = data.price_html;
-      const htmlPriceArray = htmlPrice.split('<del>');
-      if (htmlPriceArray.length > 1) {
-        const price = htmlPriceArray[1].split('</span>');
-        currentValue = +price[price.length - 2].replace(/[^0-9.-]+/g, '');
-        currentValue = currentValue * 1000;
+      if (htmlPrice) {
+        const htmlPriceArray = htmlPrice.split('<del>');
+        if (htmlPriceArray.length > 1) {
+          const price = htmlPriceArray[1].split('</span>');
+          currentValue = +price[price.length - 2].replace(/[^0-9.-]+/g, '');
+          currentValue = currentValue * 1000;
+        }
       }
     }
 
