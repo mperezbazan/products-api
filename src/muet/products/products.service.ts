@@ -214,6 +214,23 @@ export class ProductsService {
               const attributes = variation.attributes.map((attribute: any) => {
                 return `${attribute.name}: ${attribute.option}`;
               });
+              let currentValue = +product.price;
+
+              if (variation.sale_price) {
+                currentValue = +variation.sale_price;
+              } else {
+                const htmlPrice = variation.price_html;
+                const htmlPriceArray = htmlPrice.split('<del>');
+
+                if (htmlPriceArray.length > 1) {
+                  const price = htmlPriceArray[1].split('</span>');
+                  currentValue = +price[price.length - 2].replace(
+                    /[^0-9.-]+/g,
+                    '',
+                  );
+                  currentValue = currentValue * 1000;
+                }
+              }
               const exportData = {
                 name: `${product.name} | ${attributes.join(' | ')}`,
                 description: `${product.short_description.replace(
@@ -221,9 +238,7 @@ export class ProductsService {
                   '',
                 )}\n${attributes.join('\n')}`,
                 originalValue: +variation.price,
-                currentValue: variation.sale_price
-                  ? +variation.sale_price
-                  : +variation.price,
+                currentValue: currentValue,
                 //category: product.categories[0].name || 'Sin Categoria',
                 // brand: product.tags?.length > 0 ? variation.tags[0].name : '',
                 unitType: 'Unidad', //product.attributes[0].name,
@@ -243,13 +258,25 @@ export class ProductsService {
             }),
           );
         } else {
+          let currentValue = +product.price;
+
+          if (product.sale_price) {
+            currentValue = +product.sale_price;
+          } else {
+            const htmlPrice = product.price_html;
+            const htmlPriceArray = htmlPrice.split('<del>');
+
+            if (htmlPriceArray.length > 1) {
+              const price = htmlPriceArray[1].split('</span>');
+              currentValue = +price[price.length - 2].replace(/[^0-9.-]+/g, '');
+              currentValue = currentValue * 1000;
+            }
+          }
           const exportData = {
             name: product.name,
             description: product.short_description.replace(/<[^>]+>/g, ''),
             originalValue: +product.price,
-            currentValue: product.sale_price
-              ? +product.sale_price
-              : +product.price,
+            currentValue: currentValue,
             category: product.categories[0].name || 'Sin Categoria',
             brand: product.tags.length > 0 ? product.tags[0].name : '',
             unitType: 'Unidad', //product.attributes[0].name,
