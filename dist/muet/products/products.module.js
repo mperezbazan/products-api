@@ -19,7 +19,7 @@ exports.MuetProductsModule = MuetProductsModule = __decorate([
         imports: [
             axios_1.HttpModule.registerAsync({
                 useFactory: () => ({
-                    timeout: 60000,
+                    timeout: 120000,
                     maxRedirects: 5,
                 }),
             }),

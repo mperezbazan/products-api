@@ -177,7 +177,9 @@ export class ProductsService {
         if (htmlPrice) {
           const htmlPriceArray = htmlPrice.split('<del>');
           if (htmlPriceArray.length > 1) {
+            console.log(htmlPriceArray);
             const price = htmlPriceArray[1].split('</span>');
+            console.log(price);
             currentValue = +price[price.length - 2].replace(/[^0-9.-]+/g, '');
             currentValue *= 1000;
           }
@@ -240,7 +242,7 @@ export class ProductsService {
       const data = await firstValueFrom(
         this.httpService
           .get(
-            `${process.env.MUET_WC_URL}/wp-json/wc/v3/products?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=${process.env.MUET_WC_CONSUMER_SECRET}&status=publish&per_page=${process.env.WC_PER_PAGE}${criterio}`,
+            `${process.env.MUET_WC_URL}/wp-json/wc/v3/products?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=30${criterio}`,
             {
               headers: {
                 Accept: 'application/json',

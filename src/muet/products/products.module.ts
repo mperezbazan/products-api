@@ -7,7 +7,7 @@ import { HttpModule } from '@nestjs/axios';
   imports: [
     HttpModule.registerAsync({
       useFactory: () => ({
-        timeout: 60000,
+        timeout: 120000,
         maxRedirects: 5,
       }),
     }),
