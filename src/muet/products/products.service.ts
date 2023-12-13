@@ -233,6 +233,7 @@ export class ProductsService {
                   }
                 }
               }
+              console.log(variation.price, currentValue);
               const exportData = {
                 name: `${product.name} | ${attributes.join(' | ')}`,
                 description: `${product.short_description.replace(
