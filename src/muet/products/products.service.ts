@@ -220,6 +220,7 @@ export class ProductsService {
                 currentValue = +variation.sale_price;
               } else {
                 const htmlPrice = variation.price_html;
+                console.log(htmlPrice);
                 if (htmlPrice) {
                   const htmlPriceArray = htmlPrice.split('<del>');
 
