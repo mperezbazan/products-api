@@ -210,16 +210,30 @@ export class ProductsService {
               .pipe(map((response) => response.data)),
           );
           Promise.all(
-            data.map((variation: any) => {
+            await data.map(async (variation: any) => {
+              console.log(variation);
               const attributes = variation.attributes.map((attribute: any) => {
                 return `${attribute.name}: ${attribute.option}`;
               });
+              const variationLink = variation._links.self[0].href;
+              const variationFromAPI = await firstValueFrom(
+                this.httpService
+                  .get(
+                    `${process.env.MUET_WC_URL}/wp-json/wc/v3/products/${variation.id}?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=${process.env.MUET_WC_CONSUMER_SECRET}`,
+                    {
+                      headers: {
+                        Accept: 'application/json',
+                      },
+                    },
+                  )
+                  .pipe(map((response) => response.data)),
+              );
               let currentValue = +variation.price;
 
-              if (variation.sale_price) {
-                currentValue = +variation.sale_price;
+              if (variationFromAPI.sale_price) {
+                currentValue = +variationFromAPI.sale_price;
               } else {
-                const htmlPrice = variation.price_html;
+                const htmlPrice = variationFromAPI.price_html;
                 console.log(htmlPrice);
                 if (htmlPrice) {
                   const htmlPriceArray = htmlPrice.split('<del>');
@@ -234,7 +248,6 @@ export class ProductsService {
                   }
                 }
               }
-              console.log(variation.price, currentValue);
               const exportData = {
                 name: `${product.name} | ${attributes.join(' | ')}`,
                 description: `${product.short_description.replace(
