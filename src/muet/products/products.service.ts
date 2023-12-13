@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { HttpService } from '@nestjs/axios/dist';
@@ -151,6 +151,64 @@ export class ProductsService {
   // create(createProductDto: CreateProductDto) {
   //   return 'This action adds a new product';
   // }
+  async fetchProductVariations(productId) {
+    try {
+      const response = await firstValueFrom(
+        this.httpService
+          .get(
+            `${process.env.MUET_WC_URL}/wp-json/wc/v3/products/${productId}/variations?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=${process.env.MUET_WC_CONSUMER_SECRET}&status=publish&per_page=${process.env.WC_PER_PAGE}`,
+          )
+          .pipe(map((response) => response.data)),
+      );
+      return response;
+    } catch (error) {
+      console.error('Error fetching product variations:', error);
+      return null;
+    }
+  }
+
+  async processProduct(product) {
+    try {
+      let currentValue = +product.price;
+      if (product.sale_price) {
+        currentValue = +product.sale_price;
+      } else {
+        const htmlPrice = product.price_html;
+        if (htmlPrice) {
+          const htmlPriceArray = htmlPrice.split('<del>');
+          if (htmlPriceArray.length > 1) {
+            const price = htmlPriceArray[1].split('</span>');
+            currentValue = +price[price.length - 2].replace(/[^0-9.-]+/g, '');
+            currentValue *= 1000;
+          }
+        }
+      }
+
+      const exportData = {
+        name: product.name,
+        description: product.short_description.replace(/<[^>]+>/g, ''),
+        originalValue: +product.price,
+        currentValue,
+        category: product.categories[0]?.name || 'Sin Categoria',
+        brand: product.tags?.length > 0 ? product.tags[0].name : '',
+        unitType: 'Unidad',
+        unitQuantity: product.stock_quantity || 1,
+        extras: null,
+        images: product.images.map((image) => ({
+          imageUrl: image.src,
+          order: image.id,
+        })),
+        sku: product.id,
+      };
+
+      if (product.stock_status === 'instock') {
+        return exportData;
+      }
+    } catch (error) {
+      console.error('Error processing product:', error);
+      return null;
+    }
+  }
 
   async search(searchProductDto: SearchProductDto) {
     let criterio = '';
@@ -178,148 +236,179 @@ export class ProductsService {
       }
     }
     console.log(criterio);
-    const data = await firstValueFrom(
-      this.httpService
-        .get(
-          `${process.env.MUET_WC_URL}/wp-json/wc/v3/products?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=${process.env.MUET_WC_CONSUMER_SECRET}&status=publish&per_page=${process.env.WC_PER_PAGE}${criterio}`,
-          {
-            headers: {
-              Accept: 'application/json',
+    try {
+      const data = await firstValueFrom(
+        this.httpService
+          .get(
+            `${process.env.MUET_WC_URL}/wp-json/wc/v3/products?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=${process.env.MUET_WC_CONSUMER_SECRET}&status=publish&per_page=${process.env.WC_PER_PAGE}${criterio}`,
+            {
+              headers: {
+                Accept: 'application/json',
+              },
             },
-          },
-        )
-        .pipe(map((response) => response.data)),
-    );
-    const finalProducts = [];
-    const products = Promise.all(
-      data.map(async (product: Product) => {
-        const images = product.images.map((image: Image) => {
-          return { imageUrl: image.src, order: image.id };
-        });
+          )
+          .pipe(map((response) => response.data)),
+      );
+
+      // const finalProducts = [];
+      // const products = await Promise.all(
+      //   data.map(async (product: Product) => {
+      //     const images = product.images.map((image: Image) => {
+      //       return { imageUrl: image.src, order: image.id };
+      //     });
+      //     if (product.variations.length > 0) {
+      //       const data = await firstValueFrom(
+      //         this.httpService
+      //           .get(
+      //             `${process.env.MUET_WC_URL}/wp-json/wc/v3/products/${product.id}/variations?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=${process.env.MUET_WC_CONSUMER_SECRET}&status=publish&per_page=${process.env.WC_PER_PAGE}`,
+      //             {
+      //               headers: {
+      //                 Accept: 'application/json',
+      //               },
+      //             },
+      //           )
+      //           .pipe(map((response) => response.data)),
+      //       );
+      //       Promise.all(
+      //         await data.map(async (variation: any) => {
+      //           const attributes = variation.attributes.map(
+      //             (attribute: any) => {
+      //               return `${attribute.name}: ${attribute.option}`;
+      //             },
+      //           );
+      //           const variationLink = variation._links.self[0].href;
+      //           const variationFromAPI = await firstValueFrom(
+      //             this.httpService
+      //               .get(
+      //                 `${process.env.MUET_WC_URL}/wp-json/wc/v3/products/${variation.id}?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=${process.env.MUET_WC_CONSUMER_SECRET}`,
+      //                 {
+      //                   headers: {
+      //                     Accept: 'application/json',
+      //                   },
+      //                 },
+      //               )
+      //               .pipe(map((response) => response.data)),
+      //           );
+      //           let currentValue = +variation.price;
+
+      //           if (variationFromAPI?.sale_price) {
+      //             currentValue = +variationFromAPI.sale_price;
+      //           } else {
+      //             const htmlPrice = variationFromAPI.price_html;
+      //             console.log(htmlPrice);
+      //             if (htmlPrice) {
+      //               const htmlPriceArray = htmlPrice.split('<del>');
+
+      //               if (htmlPriceArray.length > 1) {
+      //                 const price = htmlPriceArray[1].split('</span>');
+      //                 currentValue = +price[price.length - 2].replace(
+      //                   /[^0-9.-]+/g,
+      //                   '',
+      //                 );
+      //                 currentValue = currentValue * 1000;
+      //               }
+      //             }
+      //           }
+      //           const exportData = {
+      //             name: `${product.name} | ${attributes.join(' | ')}`,
+      //             description: `${product.short_description.replace(
+      //               /<[^>]+>/g,
+      //               '',
+      //             )}\n${attributes.join('\n')}`,
+      //             originalValue: +variation.price,
+      //             currentValue: currentValue,
+      //             //category: product.categories[0].name || 'Sin Categoria',
+      //             // brand: product.tags?.length > 0 ? variation.tags[0].name : '',
+      //             unitType: 'Unidad', //product.attributes[0].name,
+      //             unitQuantity: variation.stock_quantity,
+      //             extras: null,
+      //             images: [
+      //               {
+      //                 imageUrl: variation.image.src,
+      //                 order: variation.image.id,
+      //               },
+      //             ],
+      //             sku: variation.id,
+      //           };
+      //           console.log(variation.stock_status);
+      //           if (variation.stock_status === 'instock') {
+      //             finalProducts.push(exportData);
+      //           }
+      //         }),
+      //       );
+      //     } else {
+      //       let currentValue = +product.price;
+
+      //       if (product.sale_price) {
+      //         currentValue = +product.sale_price;
+      //       } else {
+      //         const htmlPrice = product.price_html;
+      //         if (htmlPrice) {
+      //           const htmlPriceArray = htmlPrice.split('<del>');
+
+      //           if (htmlPriceArray.length > 1) {
+      //             const price = htmlPriceArray[1].split('</span>');
+      //             currentValue = +price[price.length - 2].replace(
+      //               /[^0-9.-]+/g,
+      //               '',
+      //             );
+      //             currentValue = currentValue * 1000;
+      //           }
+      //         }
+      //       }
+      //       const exportData = {
+      //         name: product.name,
+      //         description: product.short_description.replace(/<[^>]+>/g, ''),
+      //         originalValue: +product.price,
+      //         currentValue: currentValue,
+      //         category: product.categories[0].name || 'Sin Categoria',
+      //         brand: product.tags.length > 0 ? product.tags[0].name : '',
+      //         unitType: 'Unidad', //product.attributes[0].name,
+      //         unitQuantity: product.stock_quantity ? product.stock_quantity : 1,
+      //         extras: null,
+      //         images: images,
+      //         sku: product.id,
+      //       };
+      //       if (product.stock_status === 'instock') {
+      //         finalProducts.push(exportData);
+      //         return exportData;
+      //       }
+      //     }
+      //     return null;
+      //   }),
+      // );
+
+      // if ((await products).length > 0) {
+      //   return {
+      //     products: finalProducts.sort((a, b) => a.name.localeCompare(b.name)),
+      //   };
+      // }
+
+      const finalProducts = [];
+      for (const product of data) {
         if (product.variations.length > 0) {
-          const data = await firstValueFrom(
-            this.httpService
-              .get(
-                `${process.env.MUET_WC_URL}/wp-json/wc/v3/products/${product.id}/variations?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=${process.env.MUET_WC_CONSUMER_SECRET}&status=publish&per_page=${process.env.WC_PER_PAGE}`,
-                {
-                  headers: {
-                    Accept: 'application/json',
-                  },
-                },
-              )
-              .pipe(map((response) => response.data)),
-          );
-          Promise.all(
-            await data.map(async (variation: any) => {
-              console.log(variation);
-              const attributes = variation.attributes.map((attribute: any) => {
-                return `${attribute.name}: ${attribute.option}`;
-              });
-              const variationLink = variation._links.self[0].href;
-              const variationFromAPI = await firstValueFrom(
-                this.httpService
-                  .get(
-                    `${process.env.MUET_WC_URL}/wp-json/wc/v3/products/${variation.id}?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=${process.env.MUET_WC_CONSUMER_SECRET}`,
-                    {
-                      headers: {
-                        Accept: 'application/json',
-                      },
-                    },
-                  )
-                  .pipe(map((response) => response.data)),
-              );
-              let currentValue = +variation.price;
-
-              if (variationFromAPI.sale_price) {
-                currentValue = +variationFromAPI.sale_price;
-              } else {
-                const htmlPrice = variationFromAPI.price_html;
-                console.log(htmlPrice);
-                if (htmlPrice) {
-                  const htmlPriceArray = htmlPrice.split('<del>');
-
-                  if (htmlPriceArray.length > 1) {
-                    const price = htmlPriceArray[1].split('</span>');
-                    currentValue = +price[price.length - 2].replace(
-                      /[^0-9.-]+/g,
-                      '',
-                    );
-                    currentValue = currentValue * 1000;
-                  }
-                }
-              }
-              const exportData = {
-                name: `${product.name} | ${attributes.join(' | ')}`,
-                description: `${product.short_description.replace(
-                  /<[^>]+>/g,
-                  '',
-                )}\n${attributes.join('\n')}`,
-                originalValue: +variation.price,
-                currentValue: currentValue,
-                //category: product.categories[0].name || 'Sin Categoria',
-                // brand: product.tags?.length > 0 ? variation.tags[0].name : '',
-                unitType: 'Unidad', //product.attributes[0].name,
-                unitQuantity: variation.stock_quantity,
-                extras: null,
-                images: [
-                  {
-                    imageUrl: variation.image.src,
-                    order: variation.image.id,
-                  },
-                ],
-                sku: variation.id,
-              };
-              if (variation.stock_status === 'instock') {
-                finalProducts.push(exportData);
-              }
-            }),
-          );
-        } else {
-          let currentValue = +product.price;
-
-          if (product.sale_price) {
-            currentValue = +product.sale_price;
-          } else {
-            const htmlPrice = product.price_html;
-            if (htmlPrice) {
-              const htmlPriceArray = htmlPrice.split('<del>');
-
-              if (htmlPriceArray.length > 1) {
-                const price = htmlPriceArray[1].split('</span>');
-                currentValue = +price[price.length - 2].replace(
-                  /[^0-9.-]+/g,
-                  '',
-                );
-                currentValue = currentValue * 1000;
-              }
+          const variations = await this.fetchProductVariations(product.id);
+          for (const variation of variations) {
+            const processedVariation = await this.processProduct(variation);
+            if (processedVariation) {
+              finalProducts.push(processedVariation);
             }
           }
-          const exportData = {
-            name: product.name,
-            description: product.short_description.replace(/<[^>]+>/g, ''),
-            originalValue: +product.price,
-            currentValue: currentValue,
-            category: product.categories[0].name || 'Sin Categoria',
-            brand: product.tags.length > 0 ? product.tags[0].name : '',
-            unitType: 'Unidad', //product.attributes[0].name,
-            unitQuantity: product.stock_quantity ? product.stock_quantity : 1,
-            extras: null,
-            images: images,
-            sku: product.id,
-          };
-          if (product.stock_status === 'instock') {
-            finalProducts.push(exportData);
-            return exportData;
+        } else {
+          const processedProduct = await this.processProduct(product);
+          if (processedProduct) {
+            finalProducts.push(processedProduct);
           }
         }
-        return null;
-      }),
-    );
+      }
 
-    if ((await products).length > 0) {
       return {
         products: finalProducts.sort((a, b) => a.name.localeCompare(b.name)),
       };
+    } catch (error) {
+      // console.log(error);
+      Logger.error(error.message, 'ProductsService.search');
+      return { status: 'error', message: error.message };
     }
   }
 

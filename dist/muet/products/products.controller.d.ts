@@ -6,6 +6,9 @@ export declare class ProductsController {
     constructor(productsService: ProductsService);
     search(searchProductDto: SearchProductDto): Promise<{
         products: any[];
+    } | {
+        status: string;
+        message: any;
     }>;
     findAll(): Promise<{
         products: any[];

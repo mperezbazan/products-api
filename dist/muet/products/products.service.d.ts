@@ -4,8 +4,13 @@ import { SearchProductDto } from './dto/search-product.dto';
 export declare class ProductsService {
     private readonly httpService;
     constructor(httpService: HttpService);
+    fetchProductVariations(productId: any): Promise<any>;
+    processProduct(product: any): Promise<any>;
     search(searchProductDto: SearchProductDto): Promise<{
         products: any[];
+    } | {
+        status: string;
+        message: any;
     }>;
     findAll(): Promise<{
         products: any[];
