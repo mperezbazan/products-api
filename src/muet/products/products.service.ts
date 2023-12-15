@@ -175,6 +175,11 @@ export class ProductsService {
       product.categories?.length > 0
         ? product.categories[0]?.name
         : 'Sin Categoria';
+
+    let images = product.images?.map((image) => ({
+      imageUrl: image.src,
+      order: image.id,
+    }));
     try {
       let currentValue = +product.price;
       if (product.sale_price) {
@@ -203,6 +208,12 @@ export class ProductsService {
           '',
         )}\n${attributes.join('\n')} `;
         category = parentProduct.categories[0]?.name || 'Sin Categoria';
+        images = [
+          {
+            imageUrl: product.image.src,
+            order: product.image.id,
+          },
+        ];
         if (!havePrice) {
           if (parentProduct.sale_price) {
             currentValue = +parentProduct.sale_price;
@@ -235,10 +246,7 @@ export class ProductsService {
         unitType: 'Unidad',
         unitQuantity: product.stock_quantity || 1,
         extras: null,
-        images: product.images?.map((image) => ({
-          imageUrl: image.src,
-          order: image.id,
-        })),
+        images: images,
         sku: product.id,
       };
 
@@ -460,7 +468,7 @@ export class ProductsService {
     const data = await firstValueFrom(
       this.httpService
         .get(
-          `${process.env.MUET_WC_URL}/wp-json/wc/v3/products?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=${process.env.MUET_WC_CONSUMER_SECRET}&status=publish&per_page=${process.env.WC_PER_PAGE}&stock_status=instock`,
+          `${process.env.MUET_WC_URL}/wp-json/wc/v3/products?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=${process.env.MUET_WC_CONSUMER_SECRET}&status=publish&per_page=30&stock_status=instock`,
           {
             headers: {
               Accept: 'application/json',
