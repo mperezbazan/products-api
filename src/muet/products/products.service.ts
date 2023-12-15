@@ -167,36 +167,75 @@ export class ProductsService {
     }
   }
 
-  async processProduct(product) {
+  async processProduct(product, parentProduct) {
+    let name = product.name;
+    let description = product.short_description?.replace(/<[^>]+>/g, '');
+    let havePrice = false;
+    let category =
+      product.categories?.length > 0
+        ? product.categories[0]?.name
+        : 'Sin Categoria';
     try {
       let currentValue = +product.price;
       if (product.sale_price) {
         currentValue = +product.sale_price;
+        havePrice = true;
       } else {
         const htmlPrice = product.price_html;
         if (htmlPrice) {
           const htmlPriceArray = htmlPrice.split('<del>');
           if (htmlPriceArray.length > 1) {
-            console.log(htmlPriceArray);
             const price = htmlPriceArray[1].split('</span>');
-            console.log(price);
-            currentValue = +price[price.length - 2].replace(/[^0-9.-]+/g, '');
+            currentValue = +price[price.length - 2]?.replace(/[^0-9.-]+/g, '');
             currentValue *= 1000;
+            havePrice = true;
+          }
+        }
+      }
+
+      if (parentProduct) {
+        const attributes = product.attributes.map((attribute: any) => {
+          return `${attribute.name}: ${attribute.option}`;
+        });
+        name = `${parentProduct.name} | ${attributes.join(' | ')}`;
+        description = `${parentProduct.short_description.replace(
+          /<[^>]+>/g,
+          '',
+        )}\n${attributes.join('\n')} `;
+        category = parentProduct.categories[0]?.name || 'Sin Categoria';
+        if (!havePrice) {
+          if (parentProduct.sale_price) {
+            currentValue = +parentProduct.sale_price;
+            havePrice = true;
+          } else {
+            const htmlPrice = parentProduct.price_html;
+            if (htmlPrice) {
+              const htmlPriceArray = htmlPrice.split('<del>');
+              if (htmlPriceArray.length > 1) {
+                const price = htmlPriceArray[1].split('</span>');
+                currentValue = +price[price.length - 2]?.replace(
+                  /[^0-9.-]+/g,
+                  '',
+                );
+                currentValue *= 1000;
+                havePrice = true;
+              }
+            }
           }
         }
       }
 
       const exportData = {
-        name: product.name,
-        description: product.short_description.replace(/<[^>]+>/g, ''),
+        name: name,
+        description: description,
         originalValue: +product.price,
         currentValue,
-        category: product.categories[0]?.name || 'Sin Categoria',
+        category: category,
         brand: product.tags?.length > 0 ? product.tags[0].name : '',
         unitType: 'Unidad',
         unitQuantity: product.stock_quantity || 1,
         extras: null,
-        images: product.images.map((image) => ({
+        images: product.images?.map((image) => ({
           imageUrl: image.src,
           order: image.id,
         })),
@@ -213,9 +252,9 @@ export class ProductsService {
   }
 
   async search(searchProductDto: SearchProductDto) {
-    let criterio = '';
+    let criterio = '&stock_status=instock';
     if (searchProductDto.Filter) {
-      criterio = `&search=${searchProductDto.Filter}`;
+      criterio += `&search=${searchProductDto.Filter}`;
     }
     if (searchProductDto.Categories.length > 0) {
       const category = await this.findCategories().then((categories: any) => {
@@ -242,7 +281,7 @@ export class ProductsService {
       const data = await firstValueFrom(
         this.httpService
           .get(
-            `${process.env.MUET_WC_URL}/wp-json/wc/v3/products?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=30${criterio}`,
+            `${process.env.MUET_WC_URL}/wp-json/wc/v3/products?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=${process.env.MUET_WC_CONSUMER_SECRET}${criterio}`,
             {
               headers: {
                 Accept: 'application/json',
@@ -391,13 +430,16 @@ export class ProductsService {
         if (product.variations.length > 0) {
           const variations = await this.fetchProductVariations(product.id);
           for (const variation of variations) {
-            const processedVariation = await this.processProduct(variation);
+            const processedVariation = await this.processProduct(
+              variation,
+              product,
+            );
             if (processedVariation) {
               finalProducts.push(processedVariation);
             }
           }
         } else {
-          const processedProduct = await this.processProduct(product);
+          const processedProduct = await this.processProduct(product, null);
           if (processedProduct) {
             finalProducts.push(processedProduct);
           }
@@ -427,128 +469,152 @@ export class ProductsService {
         )
         .pipe(map((response) => response.data)),
     );
+    // const finalProducts = [];
+    // const products = Promise.all(
+    //   data.map(async (product: Product) => {
+    //     const images = product.images.map((image: Image) => {
+    //       return { imageUrl: image.src, order: image.id };
+    //     });
+    //     if (product.variations.length > 0) {
+    //       const data = await firstValueFrom(
+    //         this.httpService
+    //           .get(
+    //             `${process.env.MUET_WC_URL}/wp-json/wc/v3/products/${product.id}/variations?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=${process.env.MUET_WC_CONSUMER_SECRET}&status=publish&per_page=${process.env.WC_PER_PAGE}`,
+    //             {
+    //               headers: {
+    //                 Accept: 'application/json',
+    //               },
+    //             },
+    //           )
+    //           .pipe(map((response) => response.data)),
+    //       );
+    //       Promise.all(
+    //         data.map((variation: any) => {
+    //           const attributes = variation.attributes.map((attribute: any) => {
+    //             return `${attribute.name}: ${attribute.option}`;
+    //           });
+
+    //           let currentValue = +variation.price;
+
+    //           if (variation.sale_price) {
+    //             currentValue = +variation.sale_price;
+    //           } else {
+    //             const htmlPrice = variation.price_html;
+    //             if (htmlPrice) {
+    //               const htmlPriceArray = htmlPrice.split('<del>');
+    //               if (htmlPriceArray.length > 1) {
+    //                 const price = htmlPriceArray[1].split('</span>');
+    //                 currentValue = +price[price.length - 2].replace(
+    //                   /[^0-9.-]+/g,
+    //                   '',
+    //                 );
+    //                 currentValue = currentValue * 1000;
+    //               }
+    //             }
+    //           }
+    //           const exportData = {
+    //             name: `${product.name} | ${attributes.join(' | ')}`,
+    //             description: `${product.short_description.replace(
+    //               /<[^>]+>/g,
+    //               '',
+    //             )}\n${attributes.join('\n')}`,
+    //             // originalValue: +variation.price,
+    //             // currentValue: variation.sale_price
+    //             //   ? +variation.sale_price
+    //             //   : +variation.price,
+    //             originalValue: +variation.price,
+    //             currentValue: currentValue,
+    //             //category: product.categories[0].name || 'Sin Categoria',
+    //             // brand: product.tags?.length > 0 ? variation.tags[0].name : '',
+    //             unitType: 'Unidad', //product.attributes[0].name,
+    //             unitQuantity: variation.stock_quantity,
+    //             extras: null,
+    //             images: [
+    //               {
+    //                 imageUrl: variation.image.src,
+    //                 order: variation.image.id,
+    //               },
+    //             ],
+    //             sku: variation.id,
+    //           };
+    //           if (variation.stock_status === 'instock') {
+    //             finalProducts.push(exportData);
+    //           }
+    //         }),
+    //       );
+    //     } else {
+    //       let currentValue = +product.price;
+
+    //       if (product.sale_price) {
+    //         currentValue = +product.sale_price;
+    //       } else {
+    //         const htmlPrice = product.price_html;
+    //         if (htmlPrice) {
+    //           const htmlPriceArray = htmlPrice.split('<del>');
+
+    //           if (htmlPriceArray.length > 1) {
+    //             const price = htmlPriceArray[1].split('</span>');
+    //             currentValue = +price[price.length - 2].replace(
+    //               /[^0-9.-]+/g,
+    //               '',
+    //             );
+    //             currentValue = currentValue * 1000;
+    //           }
+    //         }
+    //       }
+    //       const exportData = {
+    //         name: product.name,
+    //         description: product.short_description.replace(/<[^>]+>/g, ''),
+    //         originalValue: +product.price,
+    //         // currentValue: product.sale_price
+    //         //   ? +product.sale_price
+    //         //   : +product.price,
+    //         currentValue: currentValue,
+    //         category: product.categories[0].name || 'Sin Categoria',
+    //         brand: product.tags.length > 0 ? product.tags[0].name : '',
+    //         unitType: 'Unidad', //product.attributes[0].name,
+    //         unitQuantity: product.stock_quantity,
+    //         extras: null,
+    //         images: images,
+    //         sku: product.id,
+    //       };
+    //       if (product.stock_status === 'instock') {
+    //         finalProducts.push(exportData);
+    //       }
+    //     }
+    //     return finalProducts;
+    //   }),
+    // );
+    // if ((await products).length > 0) {
+    //   return {
+    //     products: finalProducts.sort((a, b) => a.name.localeCompare(b.name)),
+    //   };
+    // }
+    // return products;
     const finalProducts = [];
-    const products = Promise.all(
-      data.map(async (product: Product) => {
-        const images = product.images.map((image: Image) => {
-          return { imageUrl: image.src, order: image.id };
-        });
-        if (product.variations.length > 0) {
-          const data = await firstValueFrom(
-            this.httpService
-              .get(
-                `${process.env.MUET_WC_URL}/wp-json/wc/v3/products/${product.id}/variations?consumer_key=${process.env.MUET_WC_CONSUMER_KEY}&consumer_secret=${process.env.MUET_WC_CONSUMER_SECRET}&status=publish&per_page=${process.env.WC_PER_PAGE}`,
-                {
-                  headers: {
-                    Accept: 'application/json',
-                  },
-                },
-              )
-              .pipe(map((response) => response.data)),
+    for (const product of data) {
+      if (product.variations.length > 0) {
+        const variations = await this.fetchProductVariations(product.id);
+        for (const variation of variations) {
+          const processedVariation = await this.processProduct(
+            variation,
+            product,
           );
-          Promise.all(
-            data.map((variation: any) => {
-              const attributes = variation.attributes.map((attribute: any) => {
-                return `${attribute.name}: ${attribute.option}`;
-              });
-
-              let currentValue = +variation.price;
-
-              if (variation.sale_price) {
-                currentValue = +variation.sale_price;
-              } else {
-                const htmlPrice = variation.price_html;
-                if (htmlPrice) {
-                  const htmlPriceArray = htmlPrice.split('<del>');
-                  if (htmlPriceArray.length > 1) {
-                    const price = htmlPriceArray[1].split('</span>');
-                    currentValue = +price[price.length - 2].replace(
-                      /[^0-9.-]+/g,
-                      '',
-                    );
-                    currentValue = currentValue * 1000;
-                  }
-                }
-              }
-              const exportData = {
-                name: `${product.name} | ${attributes.join(' | ')}`,
-                description: `${product.short_description.replace(
-                  /<[^>]+>/g,
-                  '',
-                )}\n${attributes.join('\n')}`,
-                // originalValue: +variation.price,
-                // currentValue: variation.sale_price
-                //   ? +variation.sale_price
-                //   : +variation.price,
-                originalValue: +variation.price,
-                currentValue: currentValue,
-                //category: product.categories[0].name || 'Sin Categoria',
-                // brand: product.tags?.length > 0 ? variation.tags[0].name : '',
-                unitType: 'Unidad', //product.attributes[0].name,
-                unitQuantity: variation.stock_quantity,
-                extras: null,
-                images: [
-                  {
-                    imageUrl: variation.image.src,
-                    order: variation.image.id,
-                  },
-                ],
-                sku: variation.id,
-              };
-              if (variation.stock_status === 'instock') {
-                finalProducts.push(exportData);
-              }
-            }),
-          );
-        } else {
-          let currentValue = +product.price;
-
-          if (product.sale_price) {
-            currentValue = +product.sale_price;
-          } else {
-            const htmlPrice = product.price_html;
-            if (htmlPrice) {
-              const htmlPriceArray = htmlPrice.split('<del>');
-
-              if (htmlPriceArray.length > 1) {
-                const price = htmlPriceArray[1].split('</span>');
-                currentValue = +price[price.length - 2].replace(
-                  /[^0-9.-]+/g,
-                  '',
-                );
-                currentValue = currentValue * 1000;
-              }
-            }
-          }
-          const exportData = {
-            name: product.name,
-            description: product.short_description.replace(/<[^>]+>/g, ''),
-            originalValue: +product.price,
-            // currentValue: product.sale_price
-            //   ? +product.sale_price
-            //   : +product.price,
-            currentValue: currentValue,
-            category: product.categories[0].name || 'Sin Categoria',
-            brand: product.tags.length > 0 ? product.tags[0].name : '',
-            unitType: 'Unidad', //product.attributes[0].name,
-            unitQuantity: product.stock_quantity,
-            extras: null,
-            images: images,
-            sku: product.id,
-          };
-          if (product.stock_status === 'instock') {
-            finalProducts.push(exportData);
+          if (processedVariation) {
+            finalProducts.push(processedVariation);
           }
         }
-        return finalProducts;
-      }),
-    );
-    if ((await products).length > 0) {
-      return {
-        products: finalProducts.sort((a, b) => a.name.localeCompare(b.name)),
-      };
+      } else {
+        const processedProduct = await this.processProduct(product, null);
+        if (processedProduct) {
+          finalProducts.push(processedProduct);
+        }
+      }
     }
-    // return products;
+
+    return {
+      products: finalProducts.sort((a, b) => a.name.localeCompare(b.name)),
+    };
   }
 
   async findCategories() {

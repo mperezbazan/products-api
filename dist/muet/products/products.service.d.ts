@@ -5,7 +5,7 @@ export declare class ProductsService {
     private readonly httpService;
     constructor(httpService: HttpService);
     fetchProductVariations(productId: any): Promise<any>;
-    processProduct(product: any): Promise<any>;
+    processProduct(product: any, parentProduct: any): Promise<any>;
     search(searchProductDto: SearchProductDto): Promise<{
         products: any[];
     } | {
